@@ -1,25 +1,69 @@
-# Python virtual environments
-venv/
+# === Virtual Environments ===
 .venv/
+venv/
 env/
 ENV/
 
-# Python cache
+# === Python Cache ===
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
 
-# PyTorch / ML models (often large)
+# === Build / Distribution ===
+build/
+dist/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+*.whl
+
+# === PyTorch / ML ===
 *.pth
 *.pt
 *.ckpt
 *.safetensors
+lightning_logs/
+wandb/
+mlruns/
+# models/
+checkpoints/
+runs/
 
-
-# Jupyter
+# === Jupyter ===
 .ipynb_checkpoints/
+*.ipynb_checkpoints
 
-# Environment files
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === Environment / Secrets ===
 .env
+.env.local
+*.pem
+*.key
+
+# === Testing / Linting Cache ===
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# === Data (if large) ===
+# Uncomment if you store datasets locally
+# data/
+# datasets/
+# *.csv
+# *.parquet
+
+# === OS ===
+.DS_Store
+Thumbs.db
