@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "set_anomaly_prediction"
+version = "0.1.0"
+description = "Attention-based set anomaly detection"
+readme = "README.md"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+license = { text = "MIT" }
+dependencies = [
+    "torch>=2.0.0",
+    "lightning>=2.0.0",
+    "torchvision>=0.15.0",
+    "matplotlib",
+    "seaborn",
+    "tqdm",
+    "numpy",
+    "pandas",
+]
+[project.optional-dependencies]
+dev = ["jupyter", "black", "isort", "pytest", "mypy"]
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"

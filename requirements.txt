@@ -1,0 +1,12 @@
+# torch>=2.0.0 torch install manually from pytorch site
+lightning>=2.0.0
+# torchvision>=0.15.0
+matplotlib
+seaborn
+tqdm
+numpy
+pandas
+jupyter
+black
+isort
+pytest
