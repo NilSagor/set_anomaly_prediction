@@ -16,7 +16,7 @@ __pycache__/
 *.pt
 *.ckpt
 *.safetensors
-models/
+
 
 # Jupyter
 .ipynb_checkpoints/
