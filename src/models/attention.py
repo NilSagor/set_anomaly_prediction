@@ -25,7 +25,8 @@ def scaled_dot_product(q, k, v, mask=None, dropout_p=0.0):
         d_k = q.size(-1)
         logits = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
         if mask is not None:
-            logits = logits.masked_fill(mask == 0, -9e15)
+            # logits = logits.masked_fill(mask == 0, -9e15)
+            logits = logits + mask
         attn_weights = F.softmax(logits, dim=-1)
     
     return attn_output, attn_weights
@@ -70,17 +71,25 @@ class MultiheadAttention(nn.Module):
         # x: (batch_size, seq_len, embed_dim)
         batch_size, seq_len, _ = x.size()
         
+        # prepare mask for SDPA: (B,1, 1, L) or (B, 1, L, L)
         if mask is not None:
             # mask: (batch_size, seq_len) -> (batch_size, 1, 1, seq_len)
             mask = mask.unsqueeze(1).unsqueeze(2)
+            mask = mask.expand(-1, -1, -1, seq_len)  # (batch_size, 1, seq_len, seq_len)
+            mask = mask.masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))    
 
+        # qkv projection
         qkv = self.qkv_proj(x)  # (batch_size, seq_len, 3*embed_dim)
         
+        # split into q, k, v and reshape for multi-head attention
         qkv = qkv.view(batch_size, seq_len, self.num_heads, 3*self.head_dim)  # (batch_size, seq_len, num_heads, 3*head_dim)
         qkv = qkv.permute(0, 2, 1, 3)  # (batch_size, num_heads, seq_len, 3*head_dim)
         q, k, v = qkv.chunk(3, dim=-1)  
 
+        # Scaled dot-product attention
         values, attention = scaled_dot_product(q, k, v, mask=mask)
+        
+        # concatenate heads and linear project
         values = values.permute(0, 2, 1, 3).contiguous()  # (batch_size, seq_len, num_heads, head_dim)
         values = values.view(batch_size, seq_len, self.embed_dim)  # (batch_size, seq_len, embed_dim)
         output = self.out_proj(values)  # (batch_size, seq_len, embed_dim)
@@ -96,15 +105,3 @@ class MultiheadAttention(nn.Module):
 
 
 
-
-# seq_len, d_k = 3, 2
-# L.seed_everything(42)
-# q = torch.randn(seq_len, d_k)
-# k = torch.randn(seq_len, d_k)
-# v = torch.randn(seq_len, d_k)
-# values, attention = scaled_dot_product(q, k, v)
-# print("Q\n", q)
-# print("K\n", k)
-# print("V\n", v)
-# print("Values\n", values)
-# print("Attention\n", attention)
