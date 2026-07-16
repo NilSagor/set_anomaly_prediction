@@ -31,6 +31,70 @@ def scaled_dot_product(q, k, v, mask=None, dropout_p=0.0):
     return attn_output, attn_weights
 
 
+def expand_mask(mask):
+    # Output shape supports (batch_size, number of heads, seq length, seq length)
+    # mask: (batch_size, seq_len) -> (batch_size, 1, 1, seq_len)
+    assert mask.ndim >= 2, "Mask must be of shape (batch_size, seq_len)"
+    if mask.ndim == 3:
+        mask = mask.unsqueeze(1)
+    while mask.ndim < 4:
+        mask = mask.unsqueeze(0)
+    return mask
+
+
+
+class MultiheadAttention(nn.Module):
+    def __init__(self, embed_dim, num_heads, dropout=0.0, bias=True):
+        super().__init__()
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.dropout = dropout
+
+        self.head_dim = embed_dim // num_heads
+        assert self.head_dim * num_heads == self.embed_dim, "embed_dim must be divisible by num_heads"
+
+        self.qkv_proj = nn.Linear(embed_dim, 3*embed_dim, bias = bias)
+        self.out_proj = nn.Linear(embed_dim, embed_dim, bias = bias)
+
+        self.dropout = nn.Dropout(dropout)
+
+    def reset_parameters(self):
+        nn.init.xavier_uniform_(self.qkv_proj.weight)
+        nn.init.xavier_uniform_(self.out_proj.weight)
+        if self.qkv_proj.bias is not None:
+            nn.init.constant_(self.qkv_proj.bias, 0.)
+        if self.out_proj.bias is not None:
+            nn.init.constant_(self.out_proj.bias, 0.)   
+    
+    def forward(self, x, mask=None, return_attention=False):
+        # x: (batch_size, seq_len, embed_dim)
+        batch_size, seq_len, _ = x.size()
+        
+        if mask is not None:
+            # mask: (batch_size, seq_len) -> (batch_size, 1, 1, seq_len)
+            mask = mask.unsqueeze(1).unsqueeze(2)
+
+        qkv = self.qkv_proj(x)  # (batch_size, seq_len, 3*embed_dim)
+        
+        qkv = qkv.view(batch_size, seq_len, self.num_heads, 3*self.head_dim)  # (batch_size, seq_len, num_heads, 3*head_dim)
+        qkv = qkv.permute(0, 2, 1, 3)  # (batch_size, num_heads, seq_len, 3*head_dim)
+        q, k, v = qkv.chunk(3, dim=-1)  
+
+        values, attention = scaled_dot_product(q, k, v, mask=mask)
+        values = values.permute(0, 2, 1, 3).contiguous()  # (batch_size, seq_len, num_heads, head_dim)
+        values = values.view(batch_size, seq_len, self.embed_dim)  # (batch_size, seq_len, embed_dim)
+        output = self.out_proj(values)  # (batch_size, seq_len, embed_dim)
+        
+        if return_attention:
+            return output, attention
+        else:
+            return output
+        
+
+
+
+
+
 
 
 # seq_len, d_k = 3, 2
