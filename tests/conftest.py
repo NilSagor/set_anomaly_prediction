@@ -3,10 +3,6 @@ import torch
 
 
 
-import pytest
-import torch
-
-
 @pytest.fixture(scope="session")
 def device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -39,6 +35,11 @@ def head_dim(embed_dim, num_heads):
 
 
 @pytest.fixture
+def dim_feedforward():
+    # feed-forward dimension is often 2-4 times the embedding dimension for encoder blocks
+    return 256
+
+@pytest.fixture
 def dummy_input(batch_size, seq_len, embed_dim, device):
     """Reproducible random input."""
     torch.manual_seed(42)
@@ -64,3 +65,21 @@ def partial_mask(batch_size, seq_len, device):
     mask = torch.ones(batch_size, seq_len, device=device)
     mask[:, -1] = 0
     return mask
+
+
+@pytest.fixture
+def pos_enc(embed_dim, device):
+    from src.models.modules import PositionalEncoding
+    return PositionalEncoding(embed_dim, max_len=5000).to(device)
+
+
+@pytest.fixture
+def encoder_block(embed_dim, num_heads, dim_feedforward, device):
+    from src.models.modules import EncoderBlock
+    return EncoderBlock(embed_dim, num_heads, dim_feedforward).to(device)
+
+
+@pytest.fixture
+def transformer_encoder(embed_dim, num_heads, dim_feedforward, device):
+    from src.models.modules import TransformerEncoder
+    return TransformerEncoder(embed_dim, num_heads, dim_feedforward, num_layers=2).to(device)
