@@ -5,11 +5,16 @@
 **End time:** 3.45 pm
 ---
 ## 1. Module Architecture
-* [] Multihead Attention Implementation
-* [] EncoderBlock Implementation
-* [] TransformerEncoder Implementation
+* [x] Multihead Attention Implementation
+* [x] EncoderBlock Implementation
+* [x] TransformerEncoder Implementation
 * [] TransformerPredictor Implementation
 * [] Set Anomaly Predictor Implementation
+* [x] Test conftest created
+* [x] test shapes passed
+* [x] test attention module passed
+* [x] test PositionalEncoding, EncoderBlock, TransformerEncoder module passed
+
 
 
 ## 2. Unit Test Results
@@ -19,4 +24,8 @@
 ## 3. Today's Retrospective
 * **What went well:**
 * **What I struggled with:**
-* **First action for tomorrow:** Set up the virtual environment, run our first trial training run on synthetic data, and check the output pipeline.
+* **First action for tomorrow:** 
+* [] TransformerPredictor Lightning Module Implementation
+* [] Set Anomaly Predictor Lightning Module Implementation
+* [] Test TransformerPredictor Implementation
+* [] Test Set Anomaly Predictor Implementation
