@@ -40,11 +40,25 @@ class TransformerPredictor(L.LightningModule):
         )
 
     def forward(self, x, mask=None, add_positional_encoding=True):
-        x = self.input_net(x)
+        # x = self.input_net(x)
+        # if add_positional_encoding:
+        #     x = self.positional_encoding(x)
+        # x = self.transformer(x, mask=mask)
+        # x = self.output_net(x)
+        # return x
+        # x = self.input_net(x)
+        # if add_positional_encoding:
+        #     x = self.positional_encoding(x)
+        # x = self.transformer(x, mask=mask)
+        # x = x.mean(dim=1)           # pool over sequence
+        # x = self.output_net(x)
+        # return x
+        x = self.input_net(x)                     # (B, L, model_dim)
         if add_positional_encoding:
             x = self.positional_encoding(x)
-        x = self.transformer(x, mask=mask)
-        x = self.output_net(x)
+        x = self.transformer(x, mask=mask)        # (B, L, model_dim)
+        x = x.mean(dim=1)                         # (B, model_dim) pool here
+        x = self.output_net(x)                    # (B, num_classes)
         return x
     
     @torch.no_grad
@@ -70,18 +84,39 @@ class TransformerPredictor(L.LightningModule):
 
 
 class SetAnomalyPredictor(TransformerPredictor):
+    def forward(self, x, mask=None, add_positional_encoding=False):
+        # Override to keep per‑element outputs (no pooling)
+        x = self.input_net(x)                     # (B, L, model_dim)
+        if add_positional_encoding:
+            x = self.positional_encoding(x)
+        x = self.transformer(x, mask=mask)        # (B, L, model_dim)
+        x = self.output_net(x)                    # (B, L, num_classes)
+        return x
+    
     def _calculate_loss(self, batch, mode="train"):
-        img_sets, _, labels = batch  # labels [B, seq_len]
-        preds = self(img_sets, add_positional_encoding=False) # [B, seq_len, num_classes]
-        preds = preds.squeeze(dim=-1)
+        # img_sets, _, labels = batch  # labels [B, seq_len]
+        # preds = self(img_sets, add_positional_encoding=False) # [B, seq_len, num_classes]
+        # preds = preds.squeeze(dim=-1)
+        # loss = self.cross_entropy(preds, labels)
+        # acc = (preds.argmax(dim=-1) == labels).float().mean()
+        # self.log(f"{mode}_loss", loss)
+        # self.log(f"{mode}_acc", acc)
+        # return loss, acc
+        img_sets, _, labels = batch   # labels: (batch, seq_len) with class indices (0 or 1)
+        preds = self(img_sets, add_positional_encoding=False)  # (batch, seq_len, num_classes)
+        batch_size, seq_len, num_classes = preds.shape
+        preds = preds.view(-1, num_classes)      # (batch*seq_len, num_classes)
+        labels = labels.view(-1)                 # (batch*seq_len)
         loss = self.cross_entropy(preds, labels)
-        acc = (preds.argmax(dim=-1) == labels).float().mean()
+        pred_classes = preds.argmax(dim=-1)      # (batch*seq_len)
+        acc = (pred_classes == labels).float().mean()
         self.log(f"{mode}_loss", loss)
         self.log(f"{mode}_acc", acc)
         return loss, acc
 
     def training_step(self, batch, batch_idx):
         loss, _ = self._calculate_loss(batch, mode="train")
+        return loss
 
     def validation_step(self, batch, batch_idx):
         _ = self._calculate_loss(batch, mode="val")
