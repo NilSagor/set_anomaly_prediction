@@ -3,6 +3,7 @@
 **Today's goal:** implement Lightning Module and tests
 
 **Start Time:** 10.30 am
+
 **End time:** 3.30 pm
 ---
 ## 1. Module Architecture
