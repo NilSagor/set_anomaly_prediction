@@ -60,13 +60,13 @@ class TransformerPredictor(L.LightningModule):
         return optimizer
 
     def training_step(self, batch, batch_idx):
-        raise NotImplemented
+        raise NotImplementedError
     
     def validation_step(self, batch, batch_idx):
-        raise NotImplemented
+        raise NotImplementedError
     
     def test_step(self, batch, batch_idx):
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class SetAnomalyPredictor(TransformerPredictor):
