@@ -4,17 +4,18 @@
 **Start Time:** 10.45 am
 
 **End time:** 3.45 pm
+
 ---
 ## 1. Module Architecture
-[x] Multihead Attention Implementation
-[x] EncoderBlock Implementation
-[x] TransformerEncoder Implementation
-[] TransformerPredictor Implementation
-[] Set Anomaly Predictor Implementation
-[x] Test conftest created
-[x] test shapes passed
-[x] test attention module passed
-[x] test PositionalEncoding, EncoderBlock, TransformerEncoder module passed
+* [x] Multihead Attention Implementation
+* [x] EncoderBlock Implementation
+* [x] TransformerEncoder Implementation
+* [] TransformerPredictor Implementation
+* [] Set Anomaly Predictor Implementation
+* [x] Test conftest created
+* [x] test shapes passed
+* [x] test attention module passed
+* [x] test PositionalEncoding, EncoderBlock, TransformerEncoder module passed
 
 
 
