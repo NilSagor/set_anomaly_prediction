@@ -42,7 +42,7 @@ class TestTransformerPredictor:
         transformer_predictor.eval()
         with torch.no_grad():
             out = transformer_predictor(dummy_input)
-        assert out.device == device
+        assert out.device.type == device.type
 
     def test_get_attention_maps_shape(self, dummy_input, transformer_predictor, num_heads):
         transformer_predictor.eval()
@@ -80,19 +80,24 @@ class TestTransformerPredictor:
 
 
 
+# ============================================================
+# SetAnomalyPredictor Tests
+# ============================================================
+
+
 class TestSetAnomalyPredictor:
     def test_forward_shape(self, dummy_input, set_anomaly_predictor):
         set_anomaly_predictor.eval()
         with torch.no_grad():
             out = set_anomaly_predictor(dummy_input, add_positional_encoding=False)
-        expected_shape = (dummy_input.shape[0], dummy_input.shape[1])
+        expected_shape = (dummy_input.shape[0], dummy_input.shape[1], set_anomaly_predictor.hparams.num_classes)
         assert out.shape == expected_shape, f"Expected {expected_shape}, got {out.shape}"
 
     def test_forward_with_positional_encoding(self, dummy_input, set_anomaly_predictor):
         set_anomaly_predictor.eval()
         with torch.no_grad():
             out = set_anomaly_predictor(dummy_input, add_positional_encoding=True)
-        expected_shape = (dummy_input.shape[0], dummy_input.shape[1])
+        expected_shape = (dummy_input.shape[0], dummy_input.shape[1], set_anomaly_predictor.hparams.num_classes)
         assert out.shape == expected_shape
 
     def test_training_step_runs(self, set_anomaly_predictor, dummy_batch):
