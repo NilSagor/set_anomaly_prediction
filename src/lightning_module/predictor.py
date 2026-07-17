@@ -10,12 +10,12 @@ class TransformerPredictor(L.LightningModule):
         self.save_hyperparameters()
         self._create_model()
 
-        self.cross_entropy = nn.CorssEntropy()
+        self.cross_entropy = nn.CrossEntropyLoss()
 
 
     def _create_model(self):
         self.input_net = nn.Sequential(
-            nn.Dropout(self.hprams.input_dropout),
+            nn.Dropout(self.hparams.input_dropout),
             nn.Linear(self.hparams.input_dim, self.hparams.model_dim)
         )
 
@@ -71,8 +71,8 @@ class TransformerPredictor(L.LightningModule):
 
 class SetAnomalyPredictor(TransformerPredictor):
     def _calculate_loss(self, batch, mode="train"):
-        img_sets, _, labels = batch 
-        preds = self(img_sets, add_positional_encoding=False)
+        img_sets, _, labels = batch  # labels [B, seq_len]
+        preds = self(img_sets, add_positional_encoding=False) # [B, seq_len, num_classes]
         preds = preds.squeeze(dim=-1)
         loss = self.cross_entropy(preds, labels)
         acc = (preds.argmax(dim=-1) == labels).float().mean()
