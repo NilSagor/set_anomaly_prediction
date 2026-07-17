@@ -77,3 +77,52 @@ class TestTransformerPredictor:
 
         for name, param in transformer_predictor.named_parameters():
             assert param.grad is not None, f"{name} has no gradient"
+
+
+
+class TestSetAnomalyPredictor:
+    def test_forward_shape(self, dummy_input, set_anomaly_predictor):
+        set_anomaly_predictor.eval()
+        with torch.no_grad():
+            out = set_anomaly_predictor(dummy_input, add_positional_encoding=False)
+        expected_shape = (dummy_input.shape[0], dummy_input.shape[1])
+        assert out.shape == expected_shape, f"Expected {expected_shape}, got {out.shape}"
+
+    def test_forward_with_positional_encoding(self, dummy_input, set_anomaly_predictor):
+        set_anomaly_predictor.eval()
+        with torch.no_grad():
+            out = set_anomaly_predictor(dummy_input, add_positional_encoding=True)
+        expected_shape = (dummy_input.shape[0], dummy_input.shape[1])
+        assert out.shape == expected_shape
+
+    def test_training_step_runs(self, set_anomaly_predictor, dummy_batch):
+        set_anomaly_predictor.train()
+        loss = set_anomaly_predictor.training_step(dummy_batch, batch_idx=0)
+        assert loss is not None
+        assert torch.isfinite(loss)
+
+    def test_validation_step_runs(self, set_anomaly_predictor, dummy_batch):
+        # No assertion need– no exception 
+        set_anomaly_predictor.eval()
+        with torch.no_grad():
+            set_anomaly_predictor.validation_step(dummy_batch, batch_idx=0)
+        
+
+    def test_test_step_runs(self, set_anomaly_predictor, dummy_batch):
+        set_anomaly_predictor.eval()
+        with torch.no_grad():
+            set_anomaly_predictor.test_step(dummy_batch, batch_idx=0)
+
+    def test_loss_calculation(self, set_anomaly_predictor, dummy_batch):
+        set_anomaly_predictor.train()
+        loss, acc = set_anomaly_predictor._calculate_loss(dummy_batch, mode="train")
+        assert torch.isfinite(loss)
+        assert 0.0 <= acc <= 1.0
+
+    def test_gradient_flow(self, dummy_input, set_anomaly_predictor):
+        set_anomaly_predictor.train()
+        out = set_anomaly_predictor(dummy_input)
+        loss = out.sum()
+        loss.backward()
+        for name, param in set_anomaly_predictor.named_parameters():
+            assert param.grad is not None, f"{name} has no gradient"
