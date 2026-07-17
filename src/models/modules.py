@@ -91,7 +91,8 @@ class TransformerEncoder(nn.Module):
     #         x = layer(x, mask=mask)  # forward pass to get the next input
     #     return attn_weights_list
 
-    def get_attention_weights(self, x, mask=None):
+    def get_attention_maps(self, x, mask=None):
+        # get_attention_weights
         attn_weights_list = []
         for layer in self.layers:
             x, attn_weights = layer(x, mask=mask, return_attention=True)
