@@ -11,7 +11,7 @@
 ## 1. Tasks Completed
 
 - [x] Fix the 10 failing tests
-- [ ] Complete model profiling notebook
+- [x] Complete model profiling notebook
 - [ ] Implement LightningDataModule
 - [ ] Write minimal training script
 
@@ -32,8 +32,6 @@
 - **What I struggled with:** 
 - **First action for tomorrow:** 
 
-Parameters: 298.754K
-FLOPs per forward pass (set size 16): 4.772M
 
 ## 4. Profiling Summary
 
@@ -73,6 +71,7 @@ FLOPs per forward pass (set size 16): 4.772M
 
     - Run a few epochs to verify the loss decreases.
 
+---
 ### notes 
 In VS Code (just before commit):
 Right-click the notebook file => "Clear All Outputs" (if using the Jupyter extension)
