@@ -4,16 +4,17 @@
 
 **Start Time:** 11.45 am
 
-**End time:** 
+**End time:** 3.30 pm
 
 ---
 
 ## 1. Tasks Completed
 
-- [x] Fix the 10 failing tests
-- [x] Complete model profiling notebook
-- [ ] Implement LightningDataModule
-- [ ] Write minimal training script
+- [x] Fix the 10 failing tests (device mismatches)
+- [x] Smoke test (6 tests passed in 0.2s)
+- [x] Complete model profiling notebook – saved plot to `results/`
+- [ ] Implement LightningDataModule → *carried over to Day 5*
+- [ ] Write minimal training script → *carried over to Day 5*
 
 ---
 
@@ -21,6 +22,7 @@
 
 - **Initial status:** 10 failed, 78 passed, 2 skipped
 - **Final status:** 86 passed, 2 skipped, 4 warnings in 0.58s
+- **Smoke test:** 6 passed in 0.2s
 
 ---
 
@@ -29,8 +31,25 @@
 ## 3. Today's Retrospective
 
 - **What went well:** 
+    - Fixed test regressions quickly by moving `pe` and `mask` to the correct device.
+    - Profiling notebook now runs and saves outputs reliably – `Agg` backend solved blank image issue.
+
 - **What I struggled with:** 
+    - VS Code kernel selection took time; resolved by selecting `.venv/bin/python` directly.
+    - `thop` wasn't pre‑installed; added it manually.
+    - Needed to adjust `sys.path` in notebooks for imports.
+
 - **First action for tomorrow:** 
+
+    1. Implement LightningDataModule    
+
+        - Define train_dataloader, val_dataloader, test_dataloader.
+
+    2. Write a minimal training script (scripts/train.py)
+
+        - Instantiate model, datamodule, and pl.Trainer.
+
+        - Run a few epochs to verify the loss decreases.
 
 
 ## 4. Profiling Summary
@@ -40,38 +59,12 @@
 - **FLOPs for set size 16:** 4.772M  
 - **Scaling:** FLOPs grow quadratically with set size (expected for self‑attention). See `results/flops_vs_set_size.png`.
 
----
-## Priority Tasks
 
-1. Fix the 10 failing tests
-
-    - Run pytest -v --tb=short to list failures.
-
-    - Likely culprits:
-
-        - test_modules.py – mask handling, dropout tests, or positional encoding odd‑dim.
-
-        - test_attention.py – shape or gradient tests affected by mask changes.
-
-    - Fix them one by one
-
-2. Complete model profiling notebook
-
-    - Adjust sys.path or run from project root to import src.
-
-    - Save FLOPs vs. set‑size plot to results/.
-
-3. Implement LightningDataModule    
-
-    - Define train_dataloader, val_dataloader, test_dataloader.
-
-4. Write a minimal training script (scripts/train.py)
-
-    - Instantiate model, datamodule, and pl.Trainer.
-
-    - Run a few epochs to verify the loss decreases.
 
 ---
-### notes 
-In VS Code (just before commit):
-Right-click the notebook file => "Clear All Outputs" (if using the Jupyter extension)
+
+## 5. Git Status
+
+- **Branch merged:** `feature/training-pipeline` → `main`
+- **Next branch:** `feature/training-loop` (Day 5)
+
