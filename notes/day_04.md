@@ -24,14 +24,23 @@
 
 ---
 
+
+
 ## 3. Today's Retrospective
 
 - **What went well:** 
 - **What I struggled with:** 
 - **First action for tomorrow:** 
 
+Parameters: 298.754K
+FLOPs per forward pass (set size 16): 4.772M
 
+## 4. Profiling Summary
 
+- **Model:** `SetAnomalyPredictor` (embed_dim=128, heads=8, layers=2)
+- **Parameters:** 298.754K  
+- **FLOPs for set size 16:** 4.772M  
+- **Scaling:** FLOPs grow quadratically with set size (expected for self‑attention). See `results/flops_vs_set_size.png`.
 
 ---
 ## Priority Tasks
@@ -64,3 +73,6 @@
 
     - Run a few epochs to verify the loss decreases.
 
+### notes 
+In VS Code (just before commit):
+Right-click the notebook file => "Clear All Outputs" (if using the Jupyter extension)
