@@ -30,7 +30,8 @@ class PositionalEncoding(nn.Module):
             raise IndexError(
                 f"Sequence length {x.size(1)} exceeds maximum length {self.pe.size(1)}"
             )
-        x = x + self.pe[:, :x.size(1), :]
+        x = x + self.pe[:, :x.size(1), :].to(x.device)
+        # pe = self.pe[:, :x.size(1), :].to(x.device)
         return self.dropout(x)
 
 

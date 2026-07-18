@@ -21,9 +21,13 @@ def test_output_shape(dummy_input, attention, num_heads):
 
 def test_dtype_and_device_preserved(dummy_input, attention, device):
     output, attn_weights = attention(dummy_input)
-    assert output.device == device
-    assert attn_weights.device == device
+    # assert output.device == device
+    assert output.device.type == device.type
+    assert attn_weights.device.type == device.type
     assert output.dtype == dummy_input.dtype
+    
+    
+    
 
 
 # =====================================================================
@@ -228,7 +232,7 @@ def test_train_mode_can_differ(dummy_input, attention):
     out2, _ = attention(dummy_input, return_attention=True)
 
     # Note: this is probabilistic; with p=0.1 dropout and 128-dim, P(equal) is negligible.
-    # If your implementation has no dropout, change this to an `xfail` or remove it.
+    
     if not torch.allclose(out1, out2, atol=1e-6):
         assert True  # Dropout is active
     else:

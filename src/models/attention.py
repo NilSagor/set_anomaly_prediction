@@ -73,6 +73,8 @@ class MultiheadAttention(nn.Module):
         
         # prepare mask for SDPA: (B,1, 1, L) or (B, 1, L, L)
         if mask is not None:
+            mask = mask.to(x.device)
+
             # mask: (batch_size, seq_len) -> (batch_size, 1, 1, seq_len)
             mask = mask.unsqueeze(1).unsqueeze(2)
             mask = mask.expand(-1, -1, -1, seq_len)  # (batch_size, 1, seq_len, seq_len)
