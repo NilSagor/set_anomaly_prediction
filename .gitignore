@@ -35,6 +35,9 @@ runs/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
+# Large notebook outputs 
+**/.ipynb_checkpoints/
+
 # === IDE ===
 .vscode/
 .idea/
