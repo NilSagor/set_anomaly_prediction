@@ -2,13 +2,8 @@ import pytest
 import torch 
 
 
-from src.models.modules import (
-    PositionalEncoding,
-    EncoderBlock,
-    TransformerEncoder
-)
 
-
+from src.models.modules import PositionalEncoding, EncoderBlock, TransformerEncoder
 
 # ========================
 # Positional Encoding Tests
