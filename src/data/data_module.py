@@ -7,7 +7,7 @@ from .dataset_prep import SetAnomalyDataset
 class SetAnomalyDataModule(L.LightningDataModule):
     def __init__(self, set_size:int = 10, num_classes:int=10, img_dim:int=128, batch_size:int=32, num_train_sets:int=1000, num_val_sets:int=100, num_test_sets:int=100, num_workers:int=4, anomaly_labels:int=None):
         super().__init__()
-        self.save_hyperparameters(ignore=['num_classes', 'anomaly_label'])
+        self.save_hyperparameters(ignore=['num_classes', 'anomaly_labels'])
         self.set_size = set_size
         self.num_classes = num_classes
         self.img_dim = img_dim
