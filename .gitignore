@@ -25,6 +25,7 @@ pip-wheel-metadata/
 *.ckpt
 *.safetensors
 lightning_logs/
+results/logs/
 wandb/
 mlruns/
 # models/
