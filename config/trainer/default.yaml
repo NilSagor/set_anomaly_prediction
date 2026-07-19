@@ -1,0 +1,22 @@
+# Dataset
+set_size: 10
+num_classes: 10
+img_dim: 128
+batch_size: 32
+num_train: 1000
+num_val: 200
+num_test: 200
+num_workers: 4
+anomaly_label: null   
+
+# Model
+model_dim: 128
+num_heads: 8
+num_layers: 2
+dropout: 0.1
+input_dropout: 0.0
+lr: 1e-3
+
+# Training
+epochs: 20
+seed: 42
